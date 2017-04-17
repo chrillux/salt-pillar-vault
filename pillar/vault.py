@@ -137,8 +137,8 @@ def __virtual__():
         return False
 
 
-def _get_id_from_file(source="~/.vault-id"):
-    """ Reads a UUID from file (default: ~/.vault-id)
+def _get_id_from_file(source="/.vault-id"):
+    """ Reads a UUID from file (default: /.vault-id)
     """
     source = os.path.abspath(os.path.expanduser(source))
     LOG.debug("Reading '%s' for user_id", source)
