@@ -76,7 +76,7 @@ Each `filter` is a compound matcher:
 `variable` is the name of the variable which will be injected into the
 pillar data.
 
-`path` is the path the desired secret on the Vault server.
+`path` is the path to the desired secret(s) on the Vault server.
 
 `key` is optional. If specified, only this specific key will be returned
 for the secret at `path`. If unspecified, the entire secret json structure

@@ -102,6 +102,7 @@ import salt.loader
 import salt.minion
 import salt.template
 import salt.utils.minions
+from salt.ext import six
 
 # Attempt to import the 'hvac' module
 try:
@@ -201,14 +202,26 @@ def _authenticate(conn):
 def couple(location, conn):
     """
     If location is a dictionary, loop over its keys, and call couple() for each key
-    If location is a string, return the value looked up from vault.
+    If location is a string, list endpoint, check if we can loop over its values and call couple().
+    If endpoint is an actual secret, return the value looked up from vault.
     """
     coupled_data = {}
-    if isinstance(location, basestring):
+    if isinstance(location, six.string_types):
         try:
             (path, key) = location.split('?', 1)
         except ValueError:
             (path, key) = (location, None)
+
+        list_secrets = conn.list(path)
+        try:
+            for data_key in list_secrets['data']['keys']:
+                coupled_data[data_key] = couple(path + '/' + data_key, conn)
+        except TypeError:
+            pass
+
+        if coupled_data:
+            return coupled_data
+
         secret = conn.read(path)
         if key:
             secret = secret["data"].get(key, None)
